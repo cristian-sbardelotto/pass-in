@@ -1,7 +1,12 @@
+import { AttendeeList } from './components/attendee-list';
+import { Header } from './components/header';
+
 export function App() {
   return (
-    <div className='flex justify-center items-center'>
-      <h1>Hello World!</h1>
+    <div className='flex flex-col gap-5 max-w-[1216px] mx-auto py-5'>
+      <Header />
+
+      <AttendeeList />
     </div>
   );
 }
