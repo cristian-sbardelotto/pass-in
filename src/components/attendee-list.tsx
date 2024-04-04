@@ -1,4 +1,5 @@
 import { IconButton } from './icon-button';
+import { Table } from './table/table';
 
 import {
   ChevronLeftIcon,
@@ -8,7 +9,7 @@ import {
   MoreHorizontalIcon,
   SearchIcon,
 } from 'lucide-react';
-import { Table } from './table/table';
+import { TableHeader } from './table/table-header';
 
 export function AttendeeList() {
   return (
@@ -32,36 +33,31 @@ export function AttendeeList() {
       <Table>
         <thead>
           <tr className='border-b border-white/10'>
-            <th className='w-12 py-3 px-4 text-sm font-semibold text-left'>
+            <TableHeader style={{ width: 48 }}>
               <input
                 type='checkbox'
                 className='size-4 bg-black/20 rounded border border-white/10'
               />
-            </th>
+            </TableHeader>
 
-            <th className='py-3 px-4 text-sm font-semibold text-left'>
-              Código
-            </th>
+            <TableHeader>Código</TableHeader>
 
-            <th className='py-3 px-4 text-sm font-semibold text-left'>
-              Participantes
-            </th>
+            <TableHeader>Participantes</TableHeader>
 
-            <th className='py-3 px-4 text-sm font-semibold text-left'>
-              Data de inscrição
-            </th>
+            <TableHeader>Data de inscrição</TableHeader>
 
-            <th className='py-3 px-4 text-sm font-semibold text-left'>
-              Data do check-in
-            </th>
+            <TableHeader>Data do check-in</TableHeader>
 
-            <th className='w-16 py-3 px-4 text-sm font-semibold text-left'></th>
+            <TableHeader style={{ width: 64 }}></TableHeader>
           </tr>
         </thead>
 
         <tbody>
-          {Array.from({ length: 10 }).map(() => (
-            <tr className='border-b border-white/10 hover:bg-white/5'>
+          {Array.from({ length: 10 }).map((_, index) => (
+            <tr
+              key={index}
+              className='border-b border-white/10 hover:bg-white/5'
+            >
               <td className='py-3 px-4 text-sm text-zinc-300'>
                 <input
                   type='checkbox'
