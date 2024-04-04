@@ -31,7 +31,7 @@ export function AttendeeList() {
     goToLastPage,
     goToNextPage,
     goToPreviousPage,
-  } = useTablePagination(0);
+  } = useTablePagination(1);
 
   return (
     <div className='flex flex-col gap-4'>
