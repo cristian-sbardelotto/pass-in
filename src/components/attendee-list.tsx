@@ -2,6 +2,7 @@ import { IconButton } from './icon-button';
 import { Table } from './table/table';
 import { TableHeader } from './table/table-header';
 import { TableCell } from './table/table-cell';
+import { TableRow } from './table/table-row';
 
 import {
   ChevronLeftIcon,
@@ -33,7 +34,7 @@ export function AttendeeList() {
 
       <Table>
         <thead>
-          <tr className='border-b border-white/10'>
+          <TableRow>
             <TableHeader style={{ width: 48 }}>
               <input
                 type='checkbox'
@@ -50,14 +51,14 @@ export function AttendeeList() {
             <TableHeader>Data do check-in</TableHeader>
 
             <TableHeader style={{ width: 64 }}></TableHeader>
-          </tr>
+          </TableRow>
         </thead>
 
         <tbody>
           {Array.from({ length: 10 }).map((_, index) => (
-            <tr
+            <TableRow
               key={index}
-              className='border-b border-white/10 hover:bg-white/5'
+              className='hover:bg-white/5'
             >
               <TableCell>
                 <input
@@ -85,7 +86,7 @@ export function AttendeeList() {
                   <MoreHorizontalIcon size={16} />
                 </IconButton>
               </TableCell>
-            </tr>
+            </TableRow>
           ))}
         </tbody>
 
