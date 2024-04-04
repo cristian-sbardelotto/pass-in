@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { IconButton } from './icon-button';
 import { Table } from './table/table';
 import { TableHeader } from './table/table-header';
@@ -22,7 +24,26 @@ import {
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
+const pagesAmount = Math.ceil(attendees.length / 10);
+
 export function AttendeeList() {
+  const [page, setPage] = useState(1);
+
+  function goToNextPage() {
+    if (page < pagesAmount) setPage(page + 1);
+  }
+  function goToPreviousPage() {
+    if (page > 1) setPage(page - 1);
+  }
+
+  function goToFirstPage() {
+    if (page > 1) setPage(1);
+  }
+
+  function goToLastPage() {
+    if (page < pagesAmount) setPage(pagesAmount);
+  }
+
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between'>
@@ -64,7 +85,7 @@ export function AttendeeList() {
         </thead>
 
         <tbody>
-          {attendees.map(attendee => (
+          {attendees.slice((page - 1) * 10, page * 10).map(attendee => (
             <TableRow
               key={attendee.id}
               className='hover:bg-white/5'
@@ -109,22 +130,36 @@ export function AttendeeList() {
             colSpan={3}
           >
             <div className='inline-flex items-center gap-8'>
-              <span>Página 1 de 23</span>
+              <span>
+                Página {page} de {pagesAmount}
+              </span>
 
               <div className='flex gap-1.5'>
-                <IconButton>
+                <IconButton
+                  onClick={goToFirstPage}
+                  disabled={page <= 1}
+                >
                   <ChevronsLeftIcon size={16} />
                 </IconButton>
 
-                <IconButton>
+                <IconButton
+                  disabled={page <= 1}
+                  onClick={goToPreviousPage}
+                >
                   <ChevronLeftIcon size={16} />
                 </IconButton>
 
-                <IconButton>
+                <IconButton
+                  disabled={page >= pagesAmount}
+                  onClick={goToNextPage}
+                >
                   <ChevronRightIcon size={16} />
                 </IconButton>
 
-                <IconButton>
+                <IconButton
+                  onClick={goToLastPage}
+                  disabled={page >= pagesAmount}
+                >
                   <ChevronsRightIcon size={16} />
                 </IconButton>
               </div>
