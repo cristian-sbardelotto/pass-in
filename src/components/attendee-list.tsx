@@ -4,6 +4,12 @@ import { TableHeader } from './table/table-header';
 import { TableCell } from './table/table-cell';
 import { TableRow } from './table/table-row';
 
+import { attendees } from '../data/attendees';
+
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -12,6 +18,9 @@ import {
   MoreHorizontalIcon,
   SearchIcon,
 } from 'lucide-react';
+
+dayjs.locale('pt-br');
+dayjs.extend(relativeTime);
 
 export function AttendeeList() {
   return (
@@ -55,9 +64,9 @@ export function AttendeeList() {
         </thead>
 
         <tbody>
-          {Array.from({ length: 10 }).map((_, index) => (
+          {attendees.map(attendee => (
             <TableRow
-              key={index}
+              key={attendee.id}
               className='hover:bg-white/5'
             >
               <TableCell>
@@ -67,19 +76,19 @@ export function AttendeeList() {
                 />
               </TableCell>
 
-              <TableCell>312312</TableCell>
+              <TableCell>{attendee.id}</TableCell>
 
               <TableCell>
                 <div className='flex flex-col gap-1'>
                   <span className='font-semibold text-white'>
-                    Cristian Sbardelotto
+                    {attendee.name}
                   </span>
-                  <span>cristian@gmail.com</span>
+                  <span>{attendee.email}</span>
                 </div>
               </TableCell>
 
-              <TableCell>7 dias atrás</TableCell>
-              <TableCell>3 dias atrás</TableCell>
+              <TableCell>{dayjs().to(attendee.createdAt)}</TableCell>
+              <TableCell>{dayjs().to(attendee.checkedInAt)}</TableCell>
 
               <TableCell>
                 <IconButton transparent>
@@ -91,7 +100,9 @@ export function AttendeeList() {
         </tbody>
 
         <tfoot>
-          <TableCell colSpan={3}>Mostrando 10 de 228 itens</TableCell>
+          <TableCell colSpan={3}>
+            Mostrando 10 de {attendees.length} itens
+          </TableCell>
 
           <TableCell
             className='text-right'
