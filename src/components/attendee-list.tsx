@@ -1,3 +1,5 @@
+import { IconButton } from './icon-button';
+
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -6,7 +8,7 @@ import {
   MoreHorizontalIcon,
   SearchIcon,
 } from 'lucide-react';
-// 1:08:07
+
 export function AttendeeList() {
   return (
     <div className='flex flex-col gap-4'>
@@ -86,9 +88,9 @@ export function AttendeeList() {
                 </td>
 
                 <td className='py-3 px-4 text-sm text-zinc-300'>
-                  <button className='bg-black/20 border border-white/10 rounded-md p-1.5'>
+                  <IconButton transparent>
                     <MoreHorizontalIcon size={16} />
-                  </button>
+                  </IconButton>
                 </td>
               </tr>
             ))}
@@ -109,21 +111,21 @@ export function AttendeeList() {
                 <span>Página 1 de 23</span>
 
                 <div className='flex gap-1.5'>
-                  <button className='bg-white/20 border border-white/10 rounded-md p-1.5'>
+                  <IconButton>
                     <ChevronsLeftIcon size={16} />
-                  </button>
+                  </IconButton>
 
-                  <button className='bg-white/20 border border-white/10 rounded-md p-1.5'>
+                  <IconButton>
                     <ChevronLeftIcon size={16} />
-                  </button>
+                  </IconButton>
 
-                  <button className='bg-white/20 border border-white/10 rounded-md p-1.5'>
+                  <IconButton>
                     <ChevronRightIcon size={16} />
-                  </button>
+                  </IconButton>
 
-                  <button className='bg-white/20 border border-white/10 rounded-md p-1.5'>
+                  <IconButton>
                     <ChevronsRightIcon size={16} />
-                  </button>
+                  </IconButton>
                 </div>
               </div>
             </td>
