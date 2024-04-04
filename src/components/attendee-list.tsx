@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { IconButton } from './icon-button';
 import { Table } from './table/table';
 import { TableHeader } from './table/table-header';
@@ -20,29 +18,20 @@ import {
   MoreHorizontalIcon,
   SearchIcon,
 } from 'lucide-react';
+import { useTablePagination } from '../hooks/useTablePagination';
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
-const pagesAmount = Math.ceil(attendees.length / 10);
-
 export function AttendeeList() {
-  const [page, setPage] = useState(1);
-
-  function goToNextPage() {
-    if (page < pagesAmount) setPage(page + 1);
-  }
-  function goToPreviousPage() {
-    if (page > 1) setPage(page - 1);
-  }
-
-  function goToFirstPage() {
-    if (page > 1) setPage(1);
-  }
-
-  function goToLastPage() {
-    if (page < pagesAmount) setPage(pagesAmount);
-  }
+  const {
+    page,
+    totalPages,
+    goToFirstPage,
+    goToLastPage,
+    goToNextPage,
+    goToPreviousPage,
+  } = useTablePagination(0);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -131,7 +120,7 @@ export function AttendeeList() {
           >
             <div className='inline-flex items-center gap-8'>
               <span>
-                Página {page} de {pagesAmount}
+                Página {page} de {totalPages}
               </span>
 
               <div className='flex gap-1.5'>
@@ -150,7 +139,7 @@ export function AttendeeList() {
                 </IconButton>
 
                 <IconButton
-                  disabled={page >= pagesAmount}
+                  disabled={page >= totalPages}
                   onClick={goToNextPage}
                 >
                   <ChevronRightIcon size={16} />
@@ -158,7 +147,7 @@ export function AttendeeList() {
 
                 <IconButton
                   onClick={goToLastPage}
-                  disabled={page >= pagesAmount}
+                  disabled={page >= totalPages}
                 >
                   <ChevronsRightIcon size={16} />
                 </IconButton>
