@@ -170,6 +170,7 @@ export function AttendeeList() {
                   <IconButton
                     onClick={goToFirstPage}
                     disabled={page <= 1}
+                    title='Primeira página'
                   >
                     <ChevronsLeftIcon size={16} />
                   </IconButton>
@@ -177,6 +178,7 @@ export function AttendeeList() {
                   <IconButton
                     disabled={page <= 1}
                     onClick={goToPreviousPage}
+                    title='Página anterior'
                   >
                     <ChevronLeftIcon size={16} />
                   </IconButton>
@@ -184,6 +186,7 @@ export function AttendeeList() {
                   <IconButton
                     disabled={page >= totalPages}
                     onClick={goToNextPage}
+                    title='Próxima página'
                   >
                     <ChevronRightIcon size={16} />
                   </IconButton>
@@ -191,6 +194,7 @@ export function AttendeeList() {
                   <IconButton
                     onClick={goToLastPage}
                     disabled={page >= totalPages}
+                    title='Última página'
                   >
                     <ChevronsRightIcon size={16} />
                   </IconButton>
