@@ -152,50 +152,52 @@ export function AttendeeList() {
         </tbody>
 
         <tfoot>
-          <Table.Cell colSpan={3}>
-            Mostrando {attendees.length} de {totalAttendees} itens
-          </Table.Cell>
+          <tr>
+            <Table.Cell colSpan={3}>
+              Mostrando {attendees.length} de {totalAttendees} itens
+            </Table.Cell>
 
-          <Table.Cell
-            className='text-right'
-            colSpan={3}
-          >
-            <div className='inline-flex items-center gap-8'>
-              <span>
-                Página {page} de {totalPages}
-              </span>
+            <Table.Cell
+              className='text-right'
+              colSpan={3}
+            >
+              <div className='inline-flex items-center gap-8'>
+                <span>
+                  Página {page} de {totalPages}
+                </span>
 
-              <div className='flex gap-1.5'>
-                <IconButton
-                  onClick={goToFirstPage}
-                  disabled={page <= 1}
-                >
-                  <ChevronsLeftIcon size={16} />
-                </IconButton>
+                <div className='flex gap-1.5'>
+                  <IconButton
+                    onClick={goToFirstPage}
+                    disabled={page <= 1}
+                  >
+                    <ChevronsLeftIcon size={16} />
+                  </IconButton>
 
-                <IconButton
-                  disabled={page <= 1}
-                  onClick={goToPreviousPage}
-                >
-                  <ChevronLeftIcon size={16} />
-                </IconButton>
+                  <IconButton
+                    disabled={page <= 1}
+                    onClick={goToPreviousPage}
+                  >
+                    <ChevronLeftIcon size={16} />
+                  </IconButton>
 
-                <IconButton
-                  disabled={page >= totalPages}
-                  onClick={goToNextPage}
-                >
-                  <ChevronRightIcon size={16} />
-                </IconButton>
+                  <IconButton
+                    disabled={page >= totalPages}
+                    onClick={goToNextPage}
+                  >
+                    <ChevronRightIcon size={16} />
+                  </IconButton>
 
-                <IconButton
-                  onClick={goToLastPage}
-                  disabled={page >= totalPages}
-                >
-                  <ChevronsRightIcon size={16} />
-                </IconButton>
+                  <IconButton
+                    onClick={goToLastPage}
+                    disabled={page >= totalPages}
+                  >
+                    <ChevronsRightIcon size={16} />
+                  </IconButton>
+                </div>
               </div>
-            </div>
-          </Table.Cell>
+            </Table.Cell>
+          </tr>
         </tfoot>
       </Table.Root>
     </div>
