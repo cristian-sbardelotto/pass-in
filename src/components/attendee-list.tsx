@@ -15,8 +15,9 @@ import {
   ChevronsRightIcon,
   MoreHorizontalIcon,
   SearchIcon,
+  XIcon,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -32,8 +33,9 @@ type Attendees = {
 export function AttendeeList() {
   const [attendees, setAttendees] = useState<Attendees[]>([]);
   const [totalAttendees, setTotalAttendees] = useState(0);
-
+  const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+
   const totalPages = Math.ceil(totalAttendees / 10);
 
   function goToNextPage() {
@@ -53,17 +55,24 @@ export function AttendeeList() {
   }
 
   useEffect(() => {
-    fetch(
-      `http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees?pageIndex=${
-        page - 1
-      }`
-    )
+    const url = new URL(
+      'http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees'
+    );
+    url.searchParams.set('pageIndex', String(page - 1));
+    search.length > 0 && url.searchParams.set('query', search);
+
+    fetch(url)
       .then(response => response.json())
       .then(data => {
         setTotalAttendees(data.total);
         setAttendees(data.attendees);
       });
-  }, [page]);
+  }, [page, search]);
+
+  function handleSearch(event: ChangeEvent<HTMLInputElement>) {
+    setSearch(event.target.value);
+    setPage(1);
+  }
 
   return (
     <div className='flex flex-col gap-4'>
@@ -71,14 +80,24 @@ export function AttendeeList() {
         <h1 className='text-2xl font-bold'>Participantes</h1>
 
         <div className='px-3 py-1.5 w-72 border border-white/10 bg-transparent rounded-lg flex items-center gap-3'>
-          <SearchIcon
-            size={16}
-            className='text-emerald-300'
-          />
+          {search.length > 0 ? (
+            <XIcon
+              size={16}
+              className='text-emerald-300 cursor-pointer'
+              onClick={() => setSearch('')}
+            />
+          ) : (
+            <SearchIcon
+              size={16}
+              className='text-emerald-300'
+            />
+          )}
 
           <input
-            className='bg-transparent flex-1 outline-none h-auto text-sm border-0 p-0'
+            className='bg-transparent flex-1 outline-none h-auto text-sm border-0 p-0 focus:ring-0'
             placeholder='Buscar participante...'
+            onChange={event => handleSearch(event)}
+            value={search}
           />
         </div>
       </div>
