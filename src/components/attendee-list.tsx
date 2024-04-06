@@ -34,24 +34,40 @@ export function AttendeeList() {
   const [attendees, setAttendees] = useState<Attendees[]>([]);
   const [totalAttendees, setTotalAttendees] = useState(0);
   const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(() => {
+    const url = new URL(location.toString());
+
+    if (url.searchParams.has('page')) {
+      return Number(url.searchParams.get('page'));
+    }
+
+    return 1;
+  });
 
   const totalPages = Math.ceil(totalAttendees / 10);
 
   function goToNextPage() {
-    if (page < totalPages) setPage(page + 1);
+    if (page < totalPages) setCurrentPage(page + 1);
   }
 
   function goToPreviousPage() {
-    if (page > 1) setPage(page - 1);
+    if (page > 1) setCurrentPage(page - 1);
   }
 
   function goToFirstPage() {
-    if (page > 1) setPage(1);
+    if (page > 1) setCurrentPage(1);
   }
 
   function goToLastPage() {
-    if (page < totalPages) setPage(totalPages);
+    if (page < totalPages) setCurrentPage(totalPages);
+  }
+
+  function setCurrentPage(page: number) {
+    const url = new URL(window.location.toString());
+    url.searchParams.set('page', String(page));
+    history.pushState({}, '', url);
+
+    setPage(page);
   }
 
   useEffect(() => {
@@ -71,7 +87,7 @@ export function AttendeeList() {
 
   function handleSearch(event: ChangeEvent<HTMLInputElement>) {
     setSearch(event.target.value);
-    setPage(1);
+    // setPage(1);
   }
 
   return (
