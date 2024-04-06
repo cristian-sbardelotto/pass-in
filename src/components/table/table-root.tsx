@@ -1,8 +1,8 @@
 import { ComponentProps } from 'react';
 
-type TableProps = ComponentProps<'table'>;
+type TableRootProps = ComponentProps<'table'>;
 
-export function Table({ children, ...props }: TableProps) {
+export function TableRoot({ children, ...props }: TableRootProps) {
   return (
     <div className='border border-white/10 rounded-lg'>
       <table

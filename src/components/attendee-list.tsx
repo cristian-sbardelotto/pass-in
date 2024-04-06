@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { IconButton } from './icon-button';
-import { Table } from './table/table';
-import { TableHeader } from './table/table-header';
-import { TableCell } from './table/table-cell';
-import { TableRow } from './table/table-row';
+import { Table } from './table';
+import { useAttendeeList } from '../hooks/useAttendeeList';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
@@ -19,7 +17,6 @@ import {
   SearchIcon,
   XIcon,
 } from 'lucide-react';
-import { useAttendeeList } from '../hooks/useAttendeeList';
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
@@ -90,76 +87,76 @@ export function AttendeeList() {
         </div>
       </div>
 
-      <Table>
+      <Table.Root>
         <thead>
-          <TableRow>
-            <TableHeader style={{ width: 48 }}>
+          <Table.Row>
+            <Table.Header style={{ width: 48 }}>
               <input
                 type='checkbox'
                 className='size-4 bg-black/20 rounded border border-white/10 cursor-pointer'
               />
-            </TableHeader>
+            </Table.Header>
 
-            <TableHeader>Código</TableHeader>
+            <Table.Header>Código</Table.Header>
 
-            <TableHeader>Participantes</TableHeader>
+            <Table.Header>Participantes</Table.Header>
 
-            <TableHeader>Data de inscrição</TableHeader>
+            <Table.Header>Data de inscrição</Table.Header>
 
-            <TableHeader>Data do check-in</TableHeader>
+            <Table.Header>Data do check-in</Table.Header>
 
-            <TableHeader style={{ width: 64 }}></TableHeader>
-          </TableRow>
+            <Table.Header style={{ width: 64 }}></Table.Header>
+          </Table.Row>
         </thead>
 
         <tbody>
           {attendees.map(attendee => (
-            <TableRow
+            <Table.Row
               key={attendee.id}
               className='hover:bg-white/5'
             >
-              <TableCell>
+              <Table.Cell>
                 <input
                   type='checkbox'
                   className='size-4 bg-black/20 rounded border border-white/10 cursor-pointer'
                 />
-              </TableCell>
+              </Table.Cell>
 
-              <TableCell>{attendee.id}</TableCell>
+              <Table.Cell>{attendee.id}</Table.Cell>
 
-              <TableCell>
+              <Table.Cell>
                 <div className='flex flex-col gap-1'>
                   <span className='font-semibold text-white'>
                     {attendee.name}
                   </span>
                   <span>{attendee.email}</span>
                 </div>
-              </TableCell>
+              </Table.Cell>
 
-              <TableCell>{dayjs().to(attendee.createdAt)}</TableCell>
-              <TableCell>
+              <Table.Cell>{dayjs().to(attendee.createdAt)}</Table.Cell>
+              <Table.Cell>
                 {attendee.checkedInAt ? (
                   dayjs().to(attendee.checkedInAt)
                 ) : (
                   <span className='text-zinc-400'>Não fez check-in</span>
                 )}
-              </TableCell>
+              </Table.Cell>
 
-              <TableCell>
+              <Table.Cell>
                 <IconButton transparent>
                   <MoreHorizontalIcon size={16} />
                 </IconButton>
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           ))}
         </tbody>
 
         <tfoot>
-          <TableCell colSpan={3}>
+          <Table.Cell colSpan={3}>
             Mostrando {attendees.length} de {totalAttendees} itens
-          </TableCell>
+          </Table.Cell>
 
-          <TableCell
+          <Table.Cell
             className='text-right'
             colSpan={3}
           >
@@ -198,9 +195,9 @@ export function AttendeeList() {
                 </IconButton>
               </div>
             </div>
-          </TableCell>
+          </Table.Cell>
         </tfoot>
-      </Table>
+      </Table.Root>
     </div>
   );
 }
