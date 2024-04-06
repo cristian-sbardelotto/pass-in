@@ -26,14 +26,15 @@ type Attendees = {
   name: string;
   email: string;
   createdAt: string;
-  checkedInAt: string;
+  checkedInAt: string | null;
 };
 
 export function AttendeeList() {
   const [attendees, setAttendees] = useState<Attendees[]>([]);
+  const [totalAttendees, setTotalAttendees] = useState(0);
 
   const [page, setPage] = useState(1);
-  const totalPages = Math.ceil(attendees.length / 10);
+  const totalPages = Math.ceil(totalAttendees / 10);
 
   function goToNextPage() {
     if (page < totalPages) setPage(page + 1);
@@ -53,10 +54,13 @@ export function AttendeeList() {
 
   useEffect(() => {
     fetch(
-      'http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees'
+      `http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees?pageIndex=${
+        page - 1
+      }`
     )
       .then(response => response.json())
       .then(data => {
+        setTotalAttendees(data.total);
         setAttendees(data.attendees);
       });
   }, [page]);
@@ -102,7 +106,7 @@ export function AttendeeList() {
         </thead>
 
         <tbody>
-          {attendees.slice((page - 1) * 10, page * 10).map(attendee => (
+          {attendees.map(attendee => (
             <TableRow
               key={attendee.id}
               className='hover:bg-white/5'
@@ -126,7 +130,13 @@ export function AttendeeList() {
               </TableCell>
 
               <TableCell>{dayjs().to(attendee.createdAt)}</TableCell>
-              <TableCell>{dayjs().to(attendee.checkedInAt)}</TableCell>
+              <TableCell>
+                {attendee.checkedInAt ? (
+                  dayjs().to(attendee.checkedInAt)
+                ) : (
+                  <span className='text-zinc-400'>Não fez check-in</span>
+                )}
+              </TableCell>
 
               <TableCell>
                 <IconButton transparent>
@@ -139,7 +149,7 @@ export function AttendeeList() {
 
         <tfoot>
           <TableCell colSpan={3}>
-            Mostrando 10 de {attendees.length} itens
+            Mostrando {attendees.length} de {totalAttendees} itens
           </TableCell>
 
           <TableCell
