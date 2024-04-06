@@ -4,8 +4,6 @@ import { TableHeader } from './table/table-header';
 import { TableCell } from './table/table-cell';
 import { TableRow } from './table/table-row';
 
-import { attendees } from '../data/attendees';
-
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -18,20 +16,50 @@ import {
   MoreHorizontalIcon,
   SearchIcon,
 } from 'lucide-react';
-import { useTablePagination } from '../hooks/useTablePagination';
+import { useEffect, useState } from 'react';
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
+type Attendees = {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+  checkedInAt: string;
+};
+
 export function AttendeeList() {
-  const {
-    page,
-    totalPages,
-    goToFirstPage,
-    goToLastPage,
-    goToNextPage,
-    goToPreviousPage,
-  } = useTablePagination(1);
+  const [attendees, setAttendees] = useState<Attendees[]>([]);
+
+  const [page, setPage] = useState(1);
+  const totalPages = Math.ceil(attendees.length / 10);
+
+  function goToNextPage() {
+    if (page < totalPages) setPage(page + 1);
+  }
+
+  function goToPreviousPage() {
+    if (page > 1) setPage(page - 1);
+  }
+
+  function goToFirstPage() {
+    if (page > 1) setPage(1);
+  }
+
+  function goToLastPage() {
+    if (page < totalPages) setPage(totalPages);
+  }
+
+  useEffect(() => {
+    fetch(
+      'http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees'
+    )
+      .then(response => response.json())
+      .then(data => {
+        setAttendees(data.attendees);
+      });
+  }, [page]);
 
   return (
     <div className='flex flex-col gap-4'>
