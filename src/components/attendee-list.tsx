@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { IconButton } from './icon-button';
 import { Table } from './table/table';
 import { TableHeader } from './table/table-header';
@@ -17,12 +19,12 @@ import {
   SearchIcon,
   XIcon,
 } from 'lucide-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useAttendeeList } from '../hooks/useAttendeeList';
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
-type Attendees = {
+type Attendee = {
   id: string;
   name: string;
   email: string;
@@ -31,60 +33,19 @@ type Attendees = {
 };
 
 export function AttendeeList() {
-  const [attendees, setAttendees] = useState<Attendees[]>([]);
+  const [attendees, setAttendees] = useState<Attendee[]>([]);
   const [totalAttendees, setTotalAttendees] = useState(0);
-  const [search, setSearch] = useState(() => {
-    const url = new URL(location.toString());
-
-    if (url.searchParams.has('search')) {
-      return url.searchParams.get('search') ?? '';
-    }
-
-    return '';
-  });
-  const [page, setPage] = useState(() => {
-    const url = new URL(location.toString());
-
-    if (url.searchParams.has('page')) {
-      return Number(url.searchParams.get('page'));
-    }
-
-    return 1;
-  });
-
   const totalPages = Math.ceil(totalAttendees / 10);
-
-  function goToNextPage() {
-    if (page < totalPages) setCurrentPage(page + 1);
-  }
-
-  function goToPreviousPage() {
-    if (page > 1) setCurrentPage(page - 1);
-  }
-
-  function goToFirstPage() {
-    if (page > 1) setCurrentPage(1);
-  }
-
-  function goToLastPage() {
-    if (page < totalPages) setCurrentPage(totalPages);
-  }
-
-  function setCurrentPage(page: number) {
-    const url = new URL(window.location.toString());
-    url.searchParams.set('page', String(page));
-    history.pushState({}, '', url);
-
-    setPage(page);
-  }
-
-  function setCurrentSearch(search: string) {
-    const url = new URL(window.location.toString());
-    url.searchParams.set('search', search);
-    history.pushState({}, '', url);
-
-    setSearch(search);
-  }
+  const {
+    search,
+    page,
+    goToFirstPage,
+    goToLastPage,
+    goToNextPage,
+    goToPreviousPage,
+    handleSearch,
+    setSearch,
+  } = useAttendeeList({ totalPages });
 
   useEffect(() => {
     const url = new URL(
@@ -100,11 +61,6 @@ export function AttendeeList() {
         setAttendees(data.attendees);
       });
   }, [page, search]);
-
-  function handleSearch(event: ChangeEvent<HTMLInputElement>) {
-    setCurrentSearch(event.target.value);
-    setCurrentPage(1);
-  }
 
   return (
     <div className='flex flex-col gap-4'>
@@ -128,7 +84,7 @@ export function AttendeeList() {
           <input
             className='bg-transparent flex-1 outline-none h-auto text-sm border-0 p-0 focus:ring-0'
             placeholder='Buscar nome...'
-            onChange={event => handleSearch(event)}
+            onChange={event => handleSearch(event.target.value)}
             value={search}
           />
         </div>
@@ -140,7 +96,7 @@ export function AttendeeList() {
             <TableHeader style={{ width: 48 }}>
               <input
                 type='checkbox'
-                className='size-4 bg-black/20 rounded border border-white/10'
+                className='size-4 bg-black/20 rounded border border-white/10 cursor-pointer'
               />
             </TableHeader>
 
@@ -165,7 +121,7 @@ export function AttendeeList() {
               <TableCell>
                 <input
                   type='checkbox'
-                  className='size-4 bg-black/20 rounded border border-white/10'
+                  className='size-4 bg-black/20 rounded border border-white/10 cursor-pointer'
                 />
               </TableCell>
 
