@@ -33,7 +33,15 @@ type Attendees = {
 export function AttendeeList() {
   const [attendees, setAttendees] = useState<Attendees[]>([]);
   const [totalAttendees, setTotalAttendees] = useState(0);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(() => {
+    const url = new URL(location.toString());
+
+    if (url.searchParams.has('search')) {
+      return url.searchParams.get('search') ?? '';
+    }
+
+    return '';
+  });
   const [page, setPage] = useState(() => {
     const url = new URL(location.toString());
 
@@ -70,6 +78,14 @@ export function AttendeeList() {
     setPage(page);
   }
 
+  function setCurrentSearch(search: string) {
+    const url = new URL(window.location.toString());
+    url.searchParams.set('search', search);
+    history.pushState({}, '', url);
+
+    setSearch(search);
+  }
+
   useEffect(() => {
     const url = new URL(
       'http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees'
@@ -86,8 +102,8 @@ export function AttendeeList() {
   }, [page, search]);
 
   function handleSearch(event: ChangeEvent<HTMLInputElement>) {
-    setSearch(event.target.value);
-    // setPage(1);
+    setCurrentSearch(event.target.value);
+    setCurrentPage(1);
   }
 
   return (
@@ -111,7 +127,7 @@ export function AttendeeList() {
 
           <input
             className='bg-transparent flex-1 outline-none h-auto text-sm border-0 p-0 focus:ring-0'
-            placeholder='Buscar participante...'
+            placeholder='Buscar nome...'
             onChange={event => handleSearch(event)}
             value={search}
           />
