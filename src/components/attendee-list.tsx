@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { IconButton } from './icon-button';
 import { Table } from './table';
-import { useAttendeeList } from '../hooks/useAttendeeList';
+import { useAttendeeList } from '../hooks/use-attendee-list';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
