@@ -1,8 +1,8 @@
+import { useEffect, useState } from 'react';
+
 import { IconButton } from './icon-button';
-import { Table } from './table/table';
-import { TableHeader } from './table/table-header';
-import { TableCell } from './table/table-cell';
-import { TableRow } from './table/table-row';
+import { Table } from './table';
+import { useAttendeeList } from '../hooks/use-attendee-list';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
@@ -17,12 +17,11 @@ import {
   SearchIcon,
   XIcon,
 } from 'lucide-react';
-import { ChangeEvent, useEffect, useState } from 'react';
 
 dayjs.locale('pt-br');
 dayjs.extend(relativeTime);
 
-type Attendees = {
+type Attendee = {
   id: string;
   name: string;
   email: string;
@@ -31,60 +30,19 @@ type Attendees = {
 };
 
 export function AttendeeList() {
-  const [attendees, setAttendees] = useState<Attendees[]>([]);
+  const [attendees, setAttendees] = useState<Attendee[]>([]);
   const [totalAttendees, setTotalAttendees] = useState(0);
-  const [search, setSearch] = useState(() => {
-    const url = new URL(location.toString());
-
-    if (url.searchParams.has('search')) {
-      return url.searchParams.get('search') ?? '';
-    }
-
-    return '';
-  });
-  const [page, setPage] = useState(() => {
-    const url = new URL(location.toString());
-
-    if (url.searchParams.has('page')) {
-      return Number(url.searchParams.get('page'));
-    }
-
-    return 1;
-  });
-
   const totalPages = Math.ceil(totalAttendees / 10);
-
-  function goToNextPage() {
-    if (page < totalPages) setCurrentPage(page + 1);
-  }
-
-  function goToPreviousPage() {
-    if (page > 1) setCurrentPage(page - 1);
-  }
-
-  function goToFirstPage() {
-    if (page > 1) setCurrentPage(1);
-  }
-
-  function goToLastPage() {
-    if (page < totalPages) setCurrentPage(totalPages);
-  }
-
-  function setCurrentPage(page: number) {
-    const url = new URL(window.location.toString());
-    url.searchParams.set('page', String(page));
-    history.pushState({}, '', url);
-
-    setPage(page);
-  }
-
-  function setCurrentSearch(search: string) {
-    const url = new URL(window.location.toString());
-    url.searchParams.set('search', search);
-    history.pushState({}, '', url);
-
-    setSearch(search);
-  }
+  const {
+    search,
+    page,
+    goToFirstPage,
+    goToLastPage,
+    goToNextPage,
+    goToPreviousPage,
+    handleSearch,
+    setSearch,
+  } = useAttendeeList({ totalPages });
 
   useEffect(() => {
     const url = new URL(
@@ -100,11 +58,6 @@ export function AttendeeList() {
         setAttendees(data.attendees);
       });
   }, [page, search]);
-
-  function handleSearch(event: ChangeEvent<HTMLInputElement>) {
-    setCurrentSearch(event.target.value);
-    setCurrentPage(1);
-  }
 
   return (
     <div className='flex flex-col gap-4'>
@@ -128,123 +81,129 @@ export function AttendeeList() {
           <input
             className='bg-transparent flex-1 outline-none h-auto text-sm border-0 p-0 focus:ring-0'
             placeholder='Buscar nome...'
-            onChange={event => handleSearch(event)}
+            onChange={event => handleSearch(event.target.value)}
             value={search}
           />
         </div>
       </div>
 
-      <Table>
+      <Table.Root>
         <thead>
-          <TableRow>
-            <TableHeader style={{ width: 48 }}>
+          <Table.Row>
+            <Table.Header style={{ width: 48 }}>
               <input
                 type='checkbox'
-                className='size-4 bg-black/20 rounded border border-white/10'
+                className='size-4 bg-black/20 rounded border border-white/10 cursor-pointer'
               />
-            </TableHeader>
+            </Table.Header>
 
-            <TableHeader>Código</TableHeader>
+            <Table.Header>Código</Table.Header>
 
-            <TableHeader>Participantes</TableHeader>
+            <Table.Header>Participantes</Table.Header>
 
-            <TableHeader>Data de inscrição</TableHeader>
+            <Table.Header>Data de inscrição</Table.Header>
 
-            <TableHeader>Data do check-in</TableHeader>
+            <Table.Header>Data do check-in</Table.Header>
 
-            <TableHeader style={{ width: 64 }}></TableHeader>
-          </TableRow>
+            <Table.Header style={{ width: 64 }}></Table.Header>
+          </Table.Row>
         </thead>
 
         <tbody>
           {attendees.map(attendee => (
-            <TableRow
+            <Table.Row
               key={attendee.id}
               className='hover:bg-white/5'
             >
-              <TableCell>
+              <Table.Cell>
                 <input
                   type='checkbox'
-                  className='size-4 bg-black/20 rounded border border-white/10'
+                  className='size-4 bg-black/20 rounded border border-white/10 cursor-pointer'
                 />
-              </TableCell>
+              </Table.Cell>
 
-              <TableCell>{attendee.id}</TableCell>
+              <Table.Cell>{attendee.id}</Table.Cell>
 
-              <TableCell>
+              <Table.Cell>
                 <div className='flex flex-col gap-1'>
                   <span className='font-semibold text-white'>
                     {attendee.name}
                   </span>
                   <span>{attendee.email}</span>
                 </div>
-              </TableCell>
+              </Table.Cell>
 
-              <TableCell>{dayjs().to(attendee.createdAt)}</TableCell>
-              <TableCell>
+              <Table.Cell>{dayjs().to(attendee.createdAt)}</Table.Cell>
+              <Table.Cell>
                 {attendee.checkedInAt ? (
                   dayjs().to(attendee.checkedInAt)
                 ) : (
                   <span className='text-zinc-400'>Não fez check-in</span>
                 )}
-              </TableCell>
+              </Table.Cell>
 
-              <TableCell>
+              <Table.Cell>
                 <IconButton transparent>
                   <MoreHorizontalIcon size={16} />
                 </IconButton>
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           ))}
         </tbody>
 
         <tfoot>
-          <TableCell colSpan={3}>
-            Mostrando {attendees.length} de {totalAttendees} itens
-          </TableCell>
+          <tr>
+            <Table.Cell colSpan={3}>
+              Mostrando {attendees.length} de {totalAttendees} itens
+            </Table.Cell>
 
-          <TableCell
-            className='text-right'
-            colSpan={3}
-          >
-            <div className='inline-flex items-center gap-8'>
-              <span>
-                Página {page} de {totalPages}
-              </span>
+            <Table.Cell
+              className='text-right'
+              colSpan={3}
+            >
+              <div className='inline-flex items-center gap-8'>
+                <span>
+                  Página {page} de {totalPages}
+                </span>
 
-              <div className='flex gap-1.5'>
-                <IconButton
-                  onClick={goToFirstPage}
-                  disabled={page <= 1}
-                >
-                  <ChevronsLeftIcon size={16} />
-                </IconButton>
+                <div className='flex gap-1.5'>
+                  <IconButton
+                    onClick={goToFirstPage}
+                    disabled={page <= 1}
+                    title='Primeira página'
+                  >
+                    <ChevronsLeftIcon size={16} />
+                  </IconButton>
 
-                <IconButton
-                  disabled={page <= 1}
-                  onClick={goToPreviousPage}
-                >
-                  <ChevronLeftIcon size={16} />
-                </IconButton>
+                  <IconButton
+                    disabled={page <= 1}
+                    onClick={goToPreviousPage}
+                    title='Página anterior'
+                  >
+                    <ChevronLeftIcon size={16} />
+                  </IconButton>
 
-                <IconButton
-                  disabled={page >= totalPages}
-                  onClick={goToNextPage}
-                >
-                  <ChevronRightIcon size={16} />
-                </IconButton>
+                  <IconButton
+                    disabled={page >= totalPages}
+                    onClick={goToNextPage}
+                    title='Próxima página'
+                  >
+                    <ChevronRightIcon size={16} />
+                  </IconButton>
 
-                <IconButton
-                  onClick={goToLastPage}
-                  disabled={page >= totalPages}
-                >
-                  <ChevronsRightIcon size={16} />
-                </IconButton>
+                  <IconButton
+                    onClick={goToLastPage}
+                    disabled={page >= totalPages}
+                    title='Última página'
+                  >
+                    <ChevronsRightIcon size={16} />
+                  </IconButton>
+                </div>
               </div>
-            </div>
-          </TableCell>
+            </Table.Cell>
+          </tr>
         </tfoot>
-      </Table>
+      </Table.Root>
     </div>
   );
 }
